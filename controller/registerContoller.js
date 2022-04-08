@@ -24,39 +24,34 @@ const computerVisionClient = new ComputerVisionClient(
   endpoint
 );
 
-function computerVision(tagsURL) {
+async function computerVision2(tagsURL) {
   let isTree = false;
-  async.series([
-    async function () {
-      console.log("-------------------------------------------------");
-      console.log("DETECT TAGS");
-      console.log();
 
-      /// Analyze URL image
-      console.log("Analyzing tags in image...", tagsURL.split("/").pop());
-      const tags = (
-        await computerVisionClient.analyzeImage(tagsURL, {
-          visualFeatures: ["Tags"],
-        })
-      ).tags;
-      console.log(`Tags: ${formatTags(tags)}`);
+  console.log("-------------------------------------------------");
+  console.log("DETECT TAGS");
+  console.log();
 
-      // Format tags for display
-      function formatTags(tags) {
-        return tags
-          .map((tag) => `${tag.name} (${tag.confidence.toFixed(2)})`)
-          .join(", ");
+  try {
+    /// Analyze URL image
+    console.log("Analyzing tags in image...", tagsURL.split("/").pop());
+    const tags = (
+      await computerVisionClient.analyzeImage(tagsURL, {
+        visualFeatures: ["Tags"],
+      })
+    ).tags;
+
+    for (const tag of tags) {
+      console.log(tag.name);
+      if (tag.name === "tree") {
+        isTree = true;
+        break;
       }
-
-      tags.forEach((tag) => {
-        if (tag.name === "crop") {
-          isTree = true;
-        }
-      });
-
-      return isTree;
-    },
-  ]);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+  console.log("INSIDE" + isTree);
+  return isTree;
 }
 
 const createTree = async (req, res) => {
@@ -71,10 +66,10 @@ const createTree = async (req, res) => {
     const { name, address, phoneNumber, treeImage } = req.body;
 
     req.body.treeImage = await fileUpload(req);
-    
-    if (computerVision(req.body.treeImage) === true) {
+    var func = await computerVision2(req.body.treeImage)
 
-      console.log("ttttttttrrrrreesss");   //checking
+    if (func) {
+      console.log("ttttttttrrrrreesss"); //checking
 
       const trees = await registerSchema.create({
         name: name,
