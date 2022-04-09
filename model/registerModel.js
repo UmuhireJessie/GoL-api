@@ -14,10 +14,10 @@ var registerSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  treeImage: {
+  treeImage: [{
     type: String,
     required: true,
-  },
+  }],
   userName: {
     type: String,
     required: true,
