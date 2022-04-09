@@ -18,6 +18,10 @@ var registerSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  userName: {
+    type: String,
+    required: true,
+  },
   date: {
     type: Date,
     default: Date.now(),

@@ -1,7 +1,6 @@
 import registerSchema from "../model/registerModel.js";
 import { fileUpload } from "../middleware/multer.js";
 import dotenv from "dotenv";
-import * as async from "async";
 import * as fs from "fs";
 import util from "util";
 import * as ComputerVision from "@azure/cognitiveservices-computervision";
@@ -27,13 +26,7 @@ const computerVisionClient = new ComputerVisionClient(
 async function computerVision2(tagsURL) {
   let isTree = false;
 
-  console.log("-------------------------------------------------");
-  console.log("DETECT TAGS");
-  console.log();
-
   try {
-    /// Analyze URL image
-    console.log("Analyzing tags in image...", tagsURL.split("/").pop());
     const tags = (
       await computerVisionClient.analyzeImage(tagsURL, {
         visualFeatures: ["Tags"],
@@ -41,14 +34,13 @@ async function computerVision2(tagsURL) {
     ).tags;
 
     for (const tag of tags) {
-      console.log(tag.name);
       if (tag.name === "tree") {
         isTree = true;
         break;
       }
     }
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
+    res.status(500).json({ error: err });
   }
   console.log("INSIDE" + isTree);
   return isTree;
@@ -63,19 +55,18 @@ const createTree = async (req, res) => {
 
   // new Tree
   try {
-    const { name, address, phoneNumber, treeImage } = req.body;
+    const { name, address, phoneNumber, userName } = req.body;
 
     req.body.treeImage = await fileUpload(req);
-    var func = await computerVision2(req.body.treeImage)
+    var func = await computerVision2(req.body.treeImage);
 
     if (func) {
-      console.log("ttttttttrrrrreesss"); //checking
-
       const trees = await registerSchema.create({
         name: name,
         address: address,
         treeImage: req.body.treeImage,
         phoneNumber: phoneNumber,
+        userName: userName,
       });
 
       res.status(201).json({
@@ -84,10 +75,10 @@ const createTree = async (req, res) => {
       });
     }
     res.status(403).json({ message: "Please check the image uploaded" });
-  } catch (error) {
+  } catch (err) {
     res.status(500).json({
       message: "Internal Server Error",
-      error: error,
+      error: err,
     });
   }
 };
