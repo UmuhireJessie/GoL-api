@@ -83,6 +83,41 @@ const createTree = async (req, res) => {
   }
 };
 
+const uploadImageTree = async (req, res) => {
+  // validate a request
+  if (!req.body) {
+    res.status(400).json({ message: "Content can not be empty!" });
+    return;
+  }
+
+  try {
+    const { userName } = req.body;
+
+    const userNameFound = await registerSchema.findOne({ userName: userName });
+
+    if (userNameFound) {
+      req.body.treeImage = await fileUpload(req);
+      console.log(req.body.treeImage);
+
+      const trees = await registerSchema.update(
+        { userName: userNameFound },
+        { $push: { treeImage: "req.body.treeImage" } }
+      );
+
+      res.status(201).json({
+        message: "A tree has been added successfully",
+        data: trees,
+      });
+    }
+    res.status(403).json({ message: "Please check the image uploaded" });
+  } catch (err) {
+    res.status(500).json({
+      message: "Internal Server Error",
+      error: err,
+    });
+  }
+};
+
 // find and retrieve all trees
 const findAllTrees = async (req, res) => {
   const tree = await registerSchema
@@ -131,4 +166,4 @@ const deleteTree = async (req, res) => {
   }
 };
 
-export { createTree, findAllTrees, findOneTree, deleteTree };
+export { createTree, findAllTrees, findOneTree, deleteTree, uploadImageTree };

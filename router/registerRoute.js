@@ -1,6 +1,6 @@
 import express from "express";
 
-import { createTree, findAllTrees, findOneTree, deleteTree } from "../controller/registerContoller.js";
+import { createTree, findAllTrees, findOneTree, deleteTree, uploadImageTree } from "../controller/registerContoller.js";
 
 import multer from "multer";
 
@@ -25,5 +25,7 @@ router.get("/register", findAllTrees);
 router.get("/register/:id", findOneTree);
 
 router.delete("/register/:id", deleteTree);
+
+router.patch("/register", uploadImageTree);
 
 export default router;
