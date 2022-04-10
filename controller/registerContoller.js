@@ -171,4 +171,4 @@ const deleteTree = async (req, res) => {
   }
 };
 
-export { createTree, findAllTrees, findOneTree, deleteTree, uploadImageTree };
+export { createTree, findAllTrees, findOneTree, deleteTree };
