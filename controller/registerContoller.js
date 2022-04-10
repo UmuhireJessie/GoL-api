@@ -81,22 +81,20 @@ const createTree = async (req, res) => {
       error: err,
     });
   }
-};
+}; 
 
 const uploadImageTree = async (req, res) => {
   // validate a request
-  if (!req.body) {
-    res.status(400).json({ message: "Content can not be empty!" });
-    return;
-  }
-
-  try {
+  // try {
     const { userName } = req.body;
 
-    const userNameFound = await registerSchema.findOne({ userNameFound });
+    const userNameFound = await registerSchema.findOne( userName );
 
-    console.log(userNameFound);
+    // var userUploadTree = userNameFound.userName;
+    console.log(req.body.userName);    // body is empty and this is undefined
     if (userNameFound) {
+      console.log(req.body);     // body is empty too
+      console.log( userNameFound )   // this being retrieved
       req.body.treeImage = await fileUpload(req);
 
       const trees = await registerSchema.findOneAndUpdate(
@@ -117,12 +115,12 @@ const uploadImageTree = async (req, res) => {
         message: "Please check the image uploaded",
         image: req.body.treeImage,
       });
-  } catch (err) {
-    res.status(500).json({
-      message: "Internal Server Error",
-      error: err,
-    });
-  }
+  // } catch (err) {
+  //   res.status(500).json({
+  //     message: "Internal Server Error",
+  //     error: err,
+  //   });
+  // }
 };
 
 // find and retrieve all trees
