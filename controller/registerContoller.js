@@ -93,23 +93,30 @@ const uploadImageTree = async (req, res) => {
   try {
     const { userName } = req.body;
 
-    const userNameFound = await registerSchema.findOne({ userName: userName });
+    const userNameFound = await registerSchema.findOne({ userNameFound });
 
+    console.log(userNameFound);
     if (userNameFound) {
       req.body.treeImage = await fileUpload(req);
-      console.log(req.body.treeImage);
 
-      const trees = await registerSchema.update(
-        { userName: userNameFound },
-        { $push: { treeImage: "req.body.treeImage" } }
+      const trees = await registerSchema.findOneAndUpdate(
+        {
+          userName: userNameFound,
+        },
+        {
+          $push: {
+            treeImage: req.body.treeImage,
+          },
+        }
       );
-
-      res.status(201).json({
-        message: "A tree has been added successfully",
-        data: trees,
-      });
+      res.status(201).json({ message: "A tree has been added successful" });
     }
-    res.status(403).json({ message: "Please check the image uploaded" });
+    res
+      .status(403)
+      .json({
+        message: "Please check the image uploaded",
+        image: req.body.treeImage,
+      });
   } catch (err) {
     res.status(500).json({
       message: "Internal Server Error",
