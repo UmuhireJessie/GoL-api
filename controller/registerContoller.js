@@ -91,8 +91,6 @@ const uploadImageTree2 = async (req, res) => {
     const userNameFound = await registerSchema.findOne( {userName: userName} );
 
     if (userNameFound) {
-      console.log(req.body);     // body is empty too
-      console.log( userNameFound )  
       req.body.treeImage = await fileUpload(req);
 
       userNameFound.treeImage.push(req.body.treeImage)
@@ -116,6 +114,8 @@ const uploadImageTree2 = async (req, res) => {
     });
   }
 };
+
+//--------------------------------------- TO BE DONE AS WE IMPROVE THE APP ----------------------------------
 
 // find and retrieve all trees
 
