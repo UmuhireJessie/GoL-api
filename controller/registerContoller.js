@@ -83,45 +83,13 @@ const createTree = async (req, res) => {
   }
 };
 
-// Adding an Image
-// const uploadImageTree = async (req, res) => {
-//   const userName = req.body.userName;
-//   const participant = await registerSchema.findOne({ userName });
-//   const partId = participant.userName;
-//   console.log(partId);
-//   console.log(userName);
-//   try {
-//     const { userName } = req.body;
-//     if (!(await registerSchema.findById(partId)))
-//       return res
-//         .status(404)
-//         .json({ error: `A participant ${userName} does not exists` });
-
-//     req.body.treeImage = await fileUpload(req);
-//     const treeUpdate = await registerSchema.findOneAndUpdate(
-//       userName,
-//       req.body
-//     );
-//     res.status(201).json({
-//       message: "A tree has been added successfully!",
-//       data: treeUpdate,
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({
-//       error: `Internal server error: ${error}`,
-//     });
-//   }
-// };
-
 const uploadImageTree2 = async (req, res) => {
   // validate a request
-  // try {
+  try {
     const { userName } = req.body;
 
     const userNameFound = await registerSchema.findOne( {userName: userName} );
 
-    // var userUploadTree = userNameFound.userName;
     if (userNameFound) {
       console.log(req.body);     // body is empty too
       console.log( userNameFound )  
@@ -129,7 +97,9 @@ const uploadImageTree2 = async (req, res) => {
 
       userNameFound.treeImage.push(req.body.treeImage)
       await userNameFound.save();
-      res.status(201).json({ message: "A tree has been added successful" });
+      res.status(201).json({
+        message: "A tree has been added successfully"
+      });
     } else{
       res
       .status(403)
@@ -139,12 +109,12 @@ const uploadImageTree2 = async (req, res) => {
       });
     }
     
-  // } catch (err) {
-  //   res.status(500).json({
-  //     message: "Internal Server Error",
-  //     error: err,
-  //   });
-  // }
+  } catch (err) {
+    res.status(500).json({
+      message: "Internal Server Error",
+      error: err,
+    });
+  }
 };
 
 // find and retrieve all trees
