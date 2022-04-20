@@ -42,7 +42,6 @@ async function computerVision2(tagsURL) {
   } catch (err) {
     res.status(500).json({ error: err });
   }
-  console.log("INSIDE" + isTree);
   return isTree;
 }
 
@@ -73,48 +72,73 @@ const createTree = async (req, res) => {
         message: "A tree has been saved successfully",
         data: trees,
       });
+    } else {
+      res.status(403).json({ message: "Please check the image uploaded" });
     }
-    res.status(403).json({ message: "Please check the image uploaded" });
   } catch (err) {
     res.status(500).json({
       message: "Internal Server Error",
       error: err,
     });
   }
-}; 
+};
 
-const uploadImageTree = async (req, res) => {
+// Adding an Image
+// const uploadImageTree = async (req, res) => {
+//   const userName = req.body.userName;
+//   const participant = await registerSchema.findOne({ userName });
+//   const partId = participant.userName;
+//   console.log(partId);
+//   console.log(userName);
+//   try {
+//     const { userName } = req.body;
+//     if (!(await registerSchema.findById(partId)))
+//       return res
+//         .status(404)
+//         .json({ error: `A participant ${userName} does not exists` });
+
+//     req.body.treeImage = await fileUpload(req);
+//     const treeUpdate = await registerSchema.findOneAndUpdate(
+//       userName,
+//       req.body
+//     );
+//     res.status(201).json({
+//       message: "A tree has been added successfully!",
+//       data: treeUpdate,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({
+//       error: `Internal server error: ${error}`,
+//     });
+//   }
+// };
+
+const uploadImageTree2 = async (req, res) => {
   // validate a request
   // try {
     const { userName } = req.body;
 
-    const userNameFound = await registerSchema.findOne( userName );
+    const userNameFound = await registerSchema.findOne( {userName: userName} );
 
     // var userUploadTree = userNameFound.userName;
-    console.log(req.body.userName);    // body is empty and this is undefined
     if (userNameFound) {
       console.log(req.body);     // body is empty too
-      console.log( userNameFound )   // this being retrieved
+      console.log( userNameFound )  
       req.body.treeImage = await fileUpload(req);
 
-      const trees = await registerSchema.findOneAndUpdate(
-        {
-          userName: userNameFound,
-        },
-        {
-          $push: {
-            treeImage: req.body.treeImage,
-          },
-        }
-      );
+      userNameFound.treeImage.push(req.body.treeImage)
+      await userNameFound.save();
       res.status(201).json({ message: "A tree has been added successful" });
-    }
-    res
+    } else{
+      res
       .status(403)
       .json({
         message: "Please check the image uploaded",
         image: req.body.treeImage,
       });
+    }
+    
   // } catch (err) {
   //   res.status(500).json({
   //     message: "Internal Server Error",
@@ -124,6 +148,7 @@ const uploadImageTree = async (req, res) => {
 };
 
 // find and retrieve all trees
+
 const findAllTrees = async (req, res) => {
   const tree = await registerSchema
     .find({})
@@ -171,4 +196,4 @@ const deleteTree = async (req, res) => {
   }
 };
 
-export { createTree, findAllTrees, findOneTree, deleteTree };
+export { createTree, findAllTrees, findOneTree, deleteTree, uploadImageTree2 };
