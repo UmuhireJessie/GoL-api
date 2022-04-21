@@ -1,8 +1,6 @@
 import registerSchema from "../model/registerModel.js";
 import { fileUpload } from "../middleware/multer.js";
 import dotenv from "dotenv";
-import * as fs from "fs";
-import util from "util";
 import * as ComputerVision from "@azure/cognitiveservices-computervision";
 import * as apikey from "@azure/ms-rest-js";
 
@@ -10,8 +8,6 @@ dotenv.config();
 
 ("use strict");
 
-const createReadStream = fs.createReadStream;
-const sleep = util.promisify(setTimeout);
 const ComputerVisionClient = ComputerVision.ComputerVisionClient;
 const ApiKeyCredentials = apikey.ApiKeyCredentials;
 
@@ -119,8 +115,6 @@ const uploadImageTree2 = async (req, res) => {
   }
 };
 
-//--------------------------------------- TO BE DONE AS WE IMPROVE THE APP ----------------------------------
-
 // find and retrieve all trees
 
 const findAllTrees = async (req, res) => {
@@ -136,6 +130,8 @@ const findAllTrees = async (req, res) => {
       });
     });
 };
+
+//--------------------------------------- TO BE DONE AS WE IMPROVE THE APP ----------------------------------
 
 // find and retrieve one tree
 const findOneTree = async (req, res) => {
