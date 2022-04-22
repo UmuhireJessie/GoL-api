@@ -118,8 +118,10 @@ const uploadImageTree2 = async (req, res) => {
 // find and retrieve all trees
 
 const findAllTrees = async (req, res) => {
-  const tree = await registerSchema
-    .find({})
+  const tree = await registerSchema;
+    tree.find({}).sort({
+      __v: -1
+    })
     .then((tree) => {
       res.json({ alltrees: tree, count: tree.length });
     })
